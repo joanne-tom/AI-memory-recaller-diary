@@ -1,0 +1,15 @@
+{
+  "0": "ask_memory",
+  "1": "deny",
+  "2": "deny_memory",
+  "3": "goodbye",
+  "4": "greet",
+  "5": "mood_afraid",
+  "6": "mood_angry",
+  "7": "mood_confused",
+  "8": "mood_disgust",
+  "9": "mood_great",
+  "10": "mood_pessimism",
+  "11": "mood_unhappy",
+  "12": "recall_happy_memory"
+}

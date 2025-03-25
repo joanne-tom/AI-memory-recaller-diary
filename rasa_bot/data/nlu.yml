@@ -1,0 +1,155 @@
+version: "3.1"
+
+nlu:
+- intent: greet
+  examples: |
+    - hey
+    - hello
+    - hi rasa
+    - hey rasa
+    - hello rasa
+    - hi
+    - hello there
+    - good morning
+    - good evening
+    - hello, how are you doing?
+    - hey there
+    - let's go
+    - hey dude
+    - goodmorning
+    - goodevening
+    - good afternoon
+    - excited
+    - I am excited
+    - i am excited
+    - loved
+    - I feel loved
+    - romantic
+    - I feel romantic
+    - anticipated
+    - I feel anticipated
+
+- intent: goodbye
+  examples: |
+    - cu
+    - good by
+    - see you later
+    - good night
+    - bye
+    - goodbye
+    - have a nice day
+    - see you around
+    - bye bye
+    - see you later
+
+- intent: mood_great
+  examples: |
+    - perfect
+    - great
+    - amazing
+    - feeling like a king
+    - wonderful
+    - I am feeling very good
+    - I am great
+    - I am amazing
+    - I am going to save the world
+    - super stoked
+    - extremely good
+    - so so perfect
+    - so good
+    - so perfect
+    - I am happy
+    - superb
+    - awesome
+    - grt
+
+- intent: mood_unhappy
+  examples: |
+    - my day was horrible
+    - I am sad
+    - I don't feel very well
+    - I am disappointed
+    - super sad
+    - I'm so sad
+    - sad
+    - very sad
+    - unhappy
+    - not good
+    - not very good
+    - extremely sad
+    - so saad
+    - so sad
+    - desperate
+    - bad
+    - disappointed
+
+- intent: mood_afraid
+  examples: |
+    - afraid
+    - I am afraid
+    - I'm afraid
+    - scared
+    - I am scared
+    - I am frightened
+    - frightened
+
+- intent: mood_confused
+  examples: |
+    - confused
+    - I am confused
+
+- intent: mood_angry
+  examples: |
+    - I'm angry
+    - angry
+    - Angry
+    - I am angry
+    - so angry
+
+- intent: mood_pessimism
+  examples: |
+    - not confident
+    - I am not confident
+    - I am not confident at all
+
+- intent: mood_disgust
+  examples: |
+    - disgusting
+    - disgusted
+    - I am disgusted
+
+- intent: recall_happy_memory
+  examples: |
+    - yes, I want to revisit happy memories
+    - tell me a happy memory
+    - show me something nice from my past
+    - yes, I want to remember something good
+    - bring back a happy moment
+    - yes please
+    - yes
+
+- intent: deny
+  examples: |
+    - no
+    - nope
+    - not really
+    - I don't think so
+    - nah
+    - never
+
+- intent: ask_memory
+  examples: |
+    - can you show me my past memories?
+    - tell me a memory
+    - I want to recall something
+    - show me a memory
+    - can you bring up something from my past?
+
+- intent: deny_memory
+  examples: |
+    - no, I don’t want to talk about it
+    - not now
+    - I don’t want to recall anything
+    - maybe later
+    - no, I don't think so
+    - noo

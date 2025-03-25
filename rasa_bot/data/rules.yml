@@ -1,0 +1,19 @@
+version: "3.1"
+
+rules:
+
+- rule: Restart session after goodbye
+  steps:
+    - intent: goodbye
+    - action: utter_goodbye
+    - action: action_restart  # Restart the conversation properly
+
+- rule: Retrieve and show a happy memory if the user agrees
+  steps:
+    - intent: recall_happy_memory
+    - action: action_retrieve_happy_memory
+
+- rule: Do nothing if the user denies recalling memories
+  steps:
+    - intent: deny_memory
+    - action: utter_okay_no_memory

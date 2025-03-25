@@ -1,0 +1,52 @@
+version: "3.1"
+
+stories:
+
+- story: happy path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_great
+  - action: utter_happy
+
+- story: sad path 2 - recall memory
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - action: utter_ask_revisit_memory
+  - intent: recall_happy_memory
+  - action: action_retrieve_happy_memory
+
+- story: sad path 3 - no memory recall
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - intent: mood_unhappy
+  - slot_was_set:
+      - last_question: "ask_revisit_memory"
+  - intent: deny
+  - action: utter_okay_no_memory
+
+- story: User asks about memory
+  steps:
+  - intent: ask_memory
+  - action: action_retrieve_memory
+
+- story: emotional path
+  steps:
+  - intent: greet
+  - action: utter_greet
+  - or:
+    - intent: mood_afraid
+    - intent: mood_disgust
+    - intent: mood_pessimism
+    - intent: mood_confused
+    - intent: mood_angry
+  - action: action_detect_emotion
+  - slot_was_set:
+      - last_question: "ask_revisit_memory"
+  - intent: recall_happy_memory
+  - action: action_retrieve_happy_memory
+  - intent: deny
+  - action: utter_okay_no_memory

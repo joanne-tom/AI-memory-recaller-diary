@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login Page</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=Joan&family=NTR&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      .login-page {
+        width: 100%;
+        min-height: 100vh;
+        background-color: #516067;
+        position: relative;
+      }
+
+      .background-image {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .nav-header {
+        position: relative;
+        z-index: 10;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 42px 54px;
+      }
+
+      .brand-logo {
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .nav-content {
+        display: flex;
+        align-items: center;
+      }
+
+      .nav-menu {
+        display: flex;
+        align-items: center;
+        gap: 48px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+      }
+
+      .nav-link {
+        color: white;
+        font-family: "NTR", sans-serif;
+        font-size: 24px;
+        text-decoration: none;
+      }
+
+      .nav-button {
+        color: #fff;
+        font-family: "Inter", sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        width: 134px;
+        height: 31px;
+        border-radius: 10px;
+        border: 3px solid #fff;
+        background-color: transparent;
+        cursor: pointer;
+      }
+
+      .mobile-menu-toggle {
+        display: none;
+        color: #ffffff;
+        font-size: 24px;
+        background: none;
+        border: none;
+        cursor: pointer;
+      }
+
+      .login-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: calc(100vh - 120px);
+      }
+
+      .login-card {
+        width: 470px;
+        border-radius: 29px;
+        border: 2px solid #fcfcfc;
+        background: linear-gradient(
+            0deg,
+            rgba(0, 0, 0, 0.2),
+            rgba(0, 0, 0, 0.2)
+          ),
+          linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
+          rgba(217, 217, 217, 0.08);
+        box-shadow:
+          39.067px -39.067px 39.067px 0px rgba(165, 165, 165, 0.08) inset,
+          -39.067px 39.067px 39.067px 0px rgba(255, 255, 255, 0.08) inset;
+        backdrop-filter: blur(43.36px);
+        padding: 40px;
+      }
+
+      .login-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 40px;
+      }
+
+      .login-title {
+        color: #cbcec0;
+        font-family: "Joan", serif;
+        font-size: 32px;
+        margin: 0;
+      }
+
+      .close-button {
+        width: 40px;
+        height: 40px;
+        border-radius: 9px;
+        background-color: #0c0b12;
+        border: none;
+        position: relative;
+        cursor: pointer;
+      }
+
+      .close-line {
+        width: 35px;
+        height: 2px;
+        background-color: #ffffff;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+
+      .close-line:first-child {
+        transform: translate(-50%, -50%) rotate(45deg);
+      }
+
+      .close-line:last-child {
+        transform: translate(-50%, -50%) rotate(-45deg);
+      }
+
+      .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 30px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .form-label {
+        color: #fff;
+        font-family: "Joan", serif;
+        font-size: 20px;
+      }
+
+      .form-input {
+        width: 100%;
+        height: 35px;
+        border-radius: 10px;
+        background-color: transparent;
+        border: 1px solid #fff;
+        color: #ffffff;
+        padding: 0 10px;
+      }
+
+      .form-options {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .remember-me {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        cursor: pointer;
+      }
+
+      .checkbox-wrapper {
+        position: relative;
+      }
+
+      .checkbox-input {
+        position: absolute;
+        opacity: 0;
+      }
+
+      .checkbox-custom {
+        width: 10px;
+        height: 10px;
+        border-radius: 2px;
+        background-color: #d9d9d9;
+        display: inline-block;
+      }
+
+      .checkbox-label,
+      .forgot-password {
+        color: #c5c9b2;
+        font-family: "NTR", sans-serif;
+        font-size: 16px;
+        text-decoration: none;
+      }
+
+      .login-submit {
+        width: 251px;
+        height: 32px;
+        border-radius: 10px;
+        border: 1px solid #949090;
+        background: linear-gradient(169deg, #000 -145.69%, #666 324.04%);
+        color: #cbcec0;
+        font-family: "NTR", sans-serif;
+        font-size: 20px;
+        margin: 0 auto;
+        cursor: pointer;
+      }
+
+      .register-prompt {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 7px;
+        color: #fff;
+        font-family: "NTR", sans-serif;
+        font-size: 16px;
+      }
+
+      .register-link {
+        color: #fff;
+        text-decoration: none;
+      }
+
+      @media (max-width: 640px) {
+        .nav-header {
+          padding: 20px;
+        }
+
+        .nav-menu {
+          display: none;
+        }
+
+        .mobile-menu-toggle {
+          display: block;
+        }
+
+        .login-card {
+          width: 90%;
+          margin: 0 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="login-page">
+      <img
+        src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced?placeholderIfAbsent=true"
+        alt=""
+        class="background-image"
+      />
+
+      <nav class="nav-header">
+        <h1 class="brand-logo">MEMOIR</h1>
+        <div class="nav-content">
+          <ul class="nav-menu">
+            <li><a href="{{url_for('main.index')}}" class="nav-link">Home</a></li>
+            <li><a href="{{url_for('main.contact')}}" class="nav-link">Contact</a></li>
+            <li><a href="{{url_for('main.about')}}" class="nav-link">About</a></li>
+            <li><a href="{{url_for('main.login_page')}}" class="nav-link">Login</a></li>
+          </ul>
+          <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
+        </div>
+      </nav>
+
+      <div class="login-container">
+        <div class="login-card">
+          <header class="login-header">
+            <h2 class="login-title">Login</h2>
+            <button class="close-button" aria-label="Close login">
+              <span class="close-line"></span>
+              <span class="close-line"></span>
+            </button>
+          </header>
+
+          <form class="login-form" action="{{url_for('main.login')}}" method="POST">
+            <div class="form-group">
+              <label for="email" class="form-label">Email</label>
+              <input type="email" name='email' id="email" class="form-input" required />
+            </div>
+
+            <div class="form-group">
+              <label for="password" class="form-label">Password</label>
+              <input
+                type="password"
+                id="password"
+                class="form-input"
+                name="password"
+                required
+              />
+            </div>
+
+            <div class="form-options">
+              <label class="remember-me">
+                <span class="checkbox-wrapper">
+                  <input type="checkbox" class="checkbox-input" />
+                  <span class="checkbox-custom"></span>
+                </span>
+                <span class="checkbox-label">Remember me</span>
+              </label>
+              <a href="#" class="forgot-password">Forget password</a>
+            </div>
+
+            <button type="submit" class="login-submit">Login</button>
+            
+            {% if error %}
+              <p style="color: red;">{{ error }}</p>  <!-- Show error if login fails -->
+            {% endif %}
+          </form>
+
+            <div class="register-prompt">
+              <span>Don't have an account ?</span>
+              <a href="{{url_for('main.registration_page')}}" class="register-link">Register</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </main>
+  </body>
+</html>

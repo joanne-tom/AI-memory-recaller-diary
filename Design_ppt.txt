@@ -1,0 +1,78 @@
+Literature Survey + References
+Episodic memory in ai agents poses risks that should be studied and mitigated
+Chad DeChant, Computer Science Department
+Columbia University, New York, NY, 10027, USA, 20 Jan 2025
+
+Insight: The paper highlights the potential of episodic memory in enhancing AI agents by enabling them to store and retrieve past experiences, improving 
+personalization, adaptability, and long-term learning. 
+Drawback: Episodic memory involves storing detailed and sensitive user data, which poses risks of data breaches, misuse, or unauthorized access.
+
+
+AI and memory
+Andrew Hoskins, Interdisciplinary Research Professor
+University of Glasgow, United Kingdom, Sep 2024
+
+Insight: It discusses how memory allows AI models to continuously update and store information over time, thus improving their ability to adapt to new 
+situations and enhance decision-making.
+Drawback: AI systems struggle to retrieve memories relevant to the specific context, leading to irrelevant or inappropriate responses.
+
+
+MemoryBank: Enhancing Large Language Models with Long-Term Memory
+Wanjun Zhong, Lianghong Guo, Qiqi Gao, He Ye, Yanlin Wang
+University of Southern California, United States, 21 May, 2023
+
+Insight: The paper introduces a "memory bank" that enables models to effectively manage and organize past interactions, allowing them to improve knowledge 
+retrieval and maintain context across different tasks without being limited by short-term memory.
+Drawback: Episodic memory systems lack emotional intelligence to interact with users in a meaningful and empathetic way.
+
+
+The Impact of Digital Technology, Social Media, and Artificial Intelligence on Cognitive Functions
+Mathura Shanmugasundaram, Arunkumar Tamilarasu
+Independent Researchers, United States, 24 Nov, 2023
+
+Insight: It highlights both the positive and negative effects of technology on cognitive functions, such as memory, attention, and critical thinking.
+Drawback: Reduced mental stimulation from external reliance - Using AI tools too frequently might result in diminished brain activity as users rely on 
+external help for tasks they could solve on their own.
+
+
+
+Aims
+1. The interactive features of your AI recaller—such as emotion-based suggestions and memory-based conversations—can stimulate users to think about their 
+past experiences, promoting mental stimulation and better memory recall.
+2. We will ensure that user passwords are not stored in plain text. By using password hashing techniques like bcrypt or Argon2, we will securely store 
+passwords, providing an extra layer of protection in the event of a data breach.
+3. Integrate advanced contextual understanding using transformers , enabling the system to recall contextually appropriate memories.
+4. Employ emotion detection and classification to adapt responses based on the user’s emotional state, enhancing user experience and trust.
+
+
+Design
+AI-powered memory recall diary begins with a User Login Page for secure access. The Main Page features three 
+key sections: a large left box for diary entries, where users can write and save their thoughts; a medium right box for keyword-based searches that retrieve 
+related diary entries in chronological order; and a top-right panel labeled "My Account" for profile management. At the top-left corner, a small typing bar 
+displays the prompt, "Hey, how do you feel today?" Clicking it opens a chat-like interface where users can share their emotions (e.g., "happy") and receive 
+prompts like "Do you want to reminisce all the happy memories?" for emotion-based memory retrieval. The design ensures an intuitive and user-friendly 
+experience with easy navigation across features.
+
+
+Problem Statement
+Develop an intuitive tool for individuals to systematically track their emotional well-being, retrieve specific experiences tied to emotions or events and access 
+timely mental health support, all while facing concerns about privacy and data security.
+
+
+Software used
+For the AI-powered memory recall diary, the stack includes HTML, CSS, and JavaScript for the frontend, with React.js for dynamic UI components. 
+The backend will use Python (Flask ) for AI features like emotion analysis using NLP libraries such as spaCy/NLTK or Hugging Face's Transformers. 
+MongoDB or PostgreSQL handles data storage, along with that AWS S3 handles large data,  and JWT secure user authentication. Hosting can be done via  
+AWS for the backend and Netlify or Vercel for the frontend, with MongoDB Atlas for cloud storage and Docker for containerization, ensuring scalable 
+deployment. This stack supports a secure, efficient, and user-friendly memory recall diary.
+
+
+
+
+
+
+
+
+
+
+

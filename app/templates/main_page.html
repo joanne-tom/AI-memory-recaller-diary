@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memoir - Your Digital Journal</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", sans-serif;
+        }
+
+        body {
+            height: 100vh;
+            background: #1a1a1a;
+            color: white;
+            overflow: hidden;
+        }
+
+        .page-container {
+            position: relative;
+            height: 100vh;
+            width: 100vw;
+            padding: 32px 54px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .background-image {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+        }
+
+        .brand-title {
+            font-size: 32px;
+            font-weight: 800;
+        }
+
+        .main-nav {
+            display: flex;
+            gap: 30px;
+            align-items: center;
+        }
+
+        .nav-link {
+            text-decoration: none;
+            color: white;
+            font-size: 20px;
+            font-family: "NTR", sans-serif;
+        }
+
+        .profile-button, .search-button {
+            background: transparent;
+            border: 2px solid white;
+            color: white;
+            padding: 6px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            font-size: 16px;
+            transition: 0.3s;
+        }
+
+        .profile-button:hover, .search-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .icon-container {
+            display: flex;
+            gap: 15px;
+        }
+
+        .profile-panel {
+            position: fixed;
+            right: -320px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .profile-panel.active {
+            right: 0;
+        }
+
+        .profile-info h3 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: white;
+        }
+
+        .profile-info p {
+            margin: 8px 0;
+            font-size: 14px;
+            color: white;
+        }
+
+        .logout-button {
+            margin-top: 20px;
+            padding: 8px 16px;
+            background: #ff4444;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 70%;
+            font-size: 14px;
+        }
+
+        .writing-section {
+            position: relative;
+            width: 300px;
+            height: 360px;
+            margin: 40px 0 0 46px;
+            cursor: pointer;
+            transition: 0.3s;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
+        }
+
+        .write-button {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(48, 2, 2, 0.9);
+            color: white;
+            border: 2px solid white;
+            padding: 8px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: "Joan", serif;
+            font-size: 18px;
+        }
+        .chat-section {
+        position: relative;
+        max-width: 900px;
+        width: 80%;
+        margin: 40px auto 0;
+        background: rgba(217, 217, 217, 0.124);
+        border-radius: 25px;
+        padding: 12px 24px;
+        display: flex;
+        align-items: center;
+      }
+
+      .chat-input {
+        flex: 1;
+        background: transparent;
+        border: none;
+        color: white;
+        font-family: "Joan", serif;
+        font-size: 16px;
+        outline: none;
+        padding: 12px;
+        min-width: 200px;
+      }
+
+      .send-button {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 6px;
+      }
+
+      .send-icon {
+        width: 25px;
+        height: 25px;
+        transition: 0.3s;
+      }
+
+      .send-button:hover .send-icon {
+        transform: scale(1.1);
+      }
+        .search-panel {
+            position: fixed;
+            right: -350px;
+            top: 0;
+            width: 320px;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.9);
+            padding: 20px;
+            transition: 0.3s;
+            z-index: 1000;
+        }
+
+        .search-panel.active {
+            right: 0;
+        }
+
+        .search-panel input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 15px;
+        }
+
+        .search-panel button {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            background: #ff4444;
+            border: none;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .search-results {
+            margin-top: 15px;
+            font-size: 14px;
+            color: white;
+        }
+
+        .search-panel h2 {
+            font-size: 22px;
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        .close-search {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced" alt="Background" class="background-image" />
+
+        <header class="header-content">
+            <h1 class="brand-title">MEMOIR</h1>
+            <nav class="main-nav">
+                <a href="/contact" class="nav-link">Contact</a>
+                <a href="/about" class="nav-link">About</a>
+                <div class="icon-container">
+                    <button class="profile-button" onclick="toggleProfile()">Profile</button>
+                    <button class="search-button" onclick="toggleSearch()">🔍</button>
+                </div>
+            </nav>
+        </header>
+
+        <div class="writing-section">
+            <button class="write-button" onclick="location.href='/write'">Write here...</button>
+        </div>
+
+        <div class="search-panel">
+    <span class="close-search" onclick="toggleSearch()">×</span>
+    <h2>Search by Keyword</h2>
+    <input type="text" id="keywordInput" placeholder="Enter a keyword..." />
+    <button onclick="searchEntries()">Search</button>
+    <div class="search-results" id="searchResults"></div>
+</div>
+
+        <div class="profile-panel">
+            <button class="close-panel" onclick="toggleProfile()">&times;</button>
+            <div class="profile-info">
+                <h3>Profile</h3>
+                <p>Username: <span id="username">{{ name }}</span></p>
+                <p>Email: <span id="email">{{ email }}</span></p>
+                <button class="logout-button" onclick="handleLogout()">Logout</button>
+            </div>
+        </div>
+        <div class="chat-section">
+            <input
+                type="text"
+                id="chatInput"  
+                class="chat-input"
+                placeholder="Tell Memoir how you feel today..."
+            />
+            <button class="send-button" onclick="handleChat()"> 
+                <img
+                    src="https://cdn.builder.io/api/v1/image/assets/f744a533914648bbb617ec08354cf43b/617b5d61c54e224ade23ee5b03410397474ad5bcc3daa1cb012d816d86ab2f5d?placeholderIfAbsent=true"
+                    alt="Send"
+                    class="send-icon"
+                />
+            </button>
+        </div>        
+      </div>
+    </div>
+
+    <div id="chatResponse" style="color: white; margin-top: 20px;"></div>
+
+<script>
+    async function handleChat() {
+    const userInput = document.getElementById('chatInput').value;
+    
+    if (!userInput.trim()) {
+        alert("Please enter a message.");
+        return;
+    }
+
+    // Clear the input field
+    document.getElementById('chatInput').value = '';
+
+    // Redirect to chat.html with query parameter
+    window.location.href = `/chat?message=${encodeURIComponent(userInput)}`;
+    }
+</script>
+
+    <script>
+        function toggleProfile() {
+            document.querySelector(".profile-panel").classList.toggle("active");
+        }
+
+        function toggleSearch() {
+            document.querySelector(".search-panel").classList.toggle("active");
+        }
+
+        async function searchEntries() {
+    const keyword = document.getElementById("keywordInput").value.trim();
+
+    if (!keyword) {
+        alert("Please enter a keyword to search.");
+        return;
+    }
+
+    const response = await fetch(`/search?keyword=${encodeURIComponent(keyword)}`);
+    const data = await response.json();
+
+    console.log("Response received:", data);  // Debugging
+
+    const resultsDiv = document.getElementById("searchResults");
+    resultsDiv.innerHTML = ""; // Clear previous results
+
+    if (data.results && data.results.length > 0) {
+        data.results.forEach(entry => {
+            const entryDiv = document.createElement("div");
+            entryDiv.innerHTML = `<p><strong>${entry.timestamp} ${entry.title}</strong>: ${entry.content}</p>`;
+            resultsDiv.appendChild(entryDiv);
+        });
+    } else {
+        resultsDiv.innerHTML = `<p>No results found.</p>`;
+    }
+}
+</script>
+</body>
+</html>

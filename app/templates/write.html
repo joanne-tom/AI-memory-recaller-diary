@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Write Your Story</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Joan&family=NTR&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "NTR", sans-serif;
+        min-height: 100vh;
+        background: #f5f5f5;
+      }
+
+      .page-container {
+        position: relative;
+        width: 100%;
+        min-height: 100vh;
+        overflow-x: hidden;
+      }
+
+      .background-wrapper {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+      }
+
+      .background-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .navigation {
+        padding: 30px 60px;
+        display: flex;
+        justify-content: flex-end;
+        background: rgba(0, 0, 0, 0.2);
+      }
+
+      .nav-list {
+        display: flex;
+        gap: 40px;
+        list-style: none;
+      }
+
+      .nav-link {
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+        text-decoration: none;
+        transition: all 0.3s ease;
+      }
+
+      .nav-link:hover {
+        transform: scale(1.1);
+        text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      .content-section {
+        padding: 20px 60px;
+        max-width: 1200px;
+        margin: 0 auto;
+      }
+
+      .title-input {
+        font-family: "Joan", serif;
+        font-size: 32px;
+        color: #100f0f;
+        width: 100%;
+        padding: 20px;
+        border-radius: 10px;
+        margin-top: 20px;
+        background-color: #d2ab84;
+        border: none;
+        outline: none;
+        transition: all 0.3s ease;
+      }
+
+      .title-input:focus {
+        box-shadow: 0 0 20px rgba(210, 171, 132, 0.5);
+      }
+
+      .editor-container {
+        margin-top: 40px;
+        border-radius: 25px;
+        min-height: calc(100vh - 300px);
+        backdrop-filter: blur(21.3px);
+        background-color: rgba(255, 255, 255, 0.9);
+        padding: 30px;
+        position: relative;
+      }
+
+      .diary-entry {
+        width: 100%;
+        min-height: 500px;
+        padding: 20px;
+        font-family: "NTR", sans-serif;
+        font-size: 18px;
+        line-height: 1.6;
+        border: none;
+        outline: none;
+        resize: vertical;
+        background: transparent;
+      }
+
+      .word-counter {
+        position: absolute;
+        bottom: 20px;
+        right: 30px;
+        font-family: "Joan", serif;
+        color: #666;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 10px 20px;
+        border-radius: 20px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .save-indicator {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 30px;
+        border-radius: 10px;
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        display: none;
+        animation: fadeInOut 2s ease;
+      }
+
+      @keyframes fadeInOut {
+        0% {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+        20% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        80% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translateY(-20px);
+        }
+      }
+
+      .error-message {
+        color: #ff4444;
+        margin-top: 10px;
+        font-size: 16px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="page-container">
+      <div class="background-wrapper">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/40a9f798c1156087e451cb09580a6986da02e380"
+          alt="Background pattern"
+          class="background-image"
+        />
+      </div>
+
+      <nav class="navigation">
+        <ul class="nav-list">
+          <li><a href="#" class="nav-link" id="saveButton">Save</a></li>
+          <li><a href="/main" class="nav-link">Back</a></li>
+        </ul>
+      </nav>
+
+      <section class="content-section">
+        <input
+          type="text"
+          class="title-input"
+          placeholder="Every entry has a story. Title yours here…"
+        />
+        <div class="editor-container">
+          <textarea
+            class="diary-entry"
+            placeholder="Start writing your story here..."
+          ></textarea>
+          <div class="word-counter">0 / 10000 words</div>
+        </div>
+        <div class="error-message">You've exceeded the 10000 word limit!</div>
+      </section>
+    </main>
+
+    <div class="save-indicator">Entry saved successfully!</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const titleInput = document.querySelector(".title-input");
+        const diaryEntry = document.querySelector(".diary-entry");
+        const wordCounter = document.querySelector(".word-counter");
+        const saveButton = document.getElementById("saveButton");
+        const saveIndicator = document.querySelector(".save-indicator");
+        const errorMessage = document.querySelector(".error-message");
+
+        function countWords(text) {
+          return text
+            .trim()
+            .split(/\s+/)
+            .filter((word) => word.length > 0).length;
+        }
+
+        function updateWordCount() {
+          const wordCount = countWords(diaryEntry.value);
+          wordCounter.textContent = `${wordCount} / 10000 words`;
+
+          if (wordCount > 10000) {
+            errorMessage.style.display = "block";
+            saveButton.style.opacity = "0.5";
+            saveButton.style.pointerEvents = "none";
+          } else {
+            errorMessage.style.display = "none";
+            saveButton.style.opacity = "1";
+            saveButton.style.pointerEvents = "auto";
+          }
+        }
+
+        diaryEntry.addEventListener("input", updateWordCount);
+
+        saveButton.addEventListener("click", async function (e) {
+  e.preventDefault();
+
+  if (countWords(diaryEntry.value) > 10000) {
+    alert("Please reduce your entry to 10000 words or less before saving.");
+    return;
+  }
+
+  const entryData = {
+    title: titleInput.value,
+    content: diaryEntry.value,
+    timestamp: new Date().toISOString(),
+  };
+
+  try {
+    const response = await fetch("/save_entry", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(entryData),
+    });
+
+    const data = await response.json();
+    if (response.ok) {
+      saveIndicator.textContent = "Entry saved successfully!";
+      saveIndicator.style.display = "block";
+
+      setTimeout(() => {
+        saveIndicator.style.display = "none";
+      }, 2000);
+    } else {
+      alert("Failed to save entry: " + data.message);
+    }
+  } catch (error) {
+    alert("An error occurred while saving.");
+    console.error("Save error:", error);
+  }
+});
+
+        // Auto-save functionality
+        let autoSaveTimeout;
+        function setupAutoSave() {
+          clearTimeout(autoSaveTimeout);
+          autoSaveTimeout = setTimeout(() => {
+            if (titleInput.value || diaryEntry.value) {
+              saveButton.click();
+            }
+          }, 30000); // Auto-save every 30 seconds
+        }
+
+        titleInput.addEventListener("input", setupAutoSave);
+        diaryEntry.addEventListener("input", setupAutoSave);
+
+        // Prevent accidental navigation
+        window.addEventListener("beforeunload", function (e) {
+          if (titleInput.value || diaryEntry.value) {
+            e.preventDefault();
+            e.returnValue = "";
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,62 @@
+{
+  "type": "MaxHistoryTrackerFeaturizer",
+  "state_featurizer": {
+    "action_texts": [],
+    "entity_tag_specs": [],
+    "feature_states": {
+      "intent": {
+        "ask_memory": 0,
+        "back": 1,
+        "deny": 2,
+        "deny_memory": 3,
+        "goodbye": 4,
+        "greet": 5,
+        "mood_afraid": 6,
+        "mood_angry": 7,
+        "mood_confused": 8,
+        "mood_disgust": 9,
+        "mood_great": 10,
+        "mood_pessimism": 11,
+        "mood_unhappy": 12,
+        "nlu_fallback": 13,
+        "out_of_scope": 14,
+        "recall_happy_memory": 15,
+        "restart": 16,
+        "session_start": 17
+      },
+      "action_name": {
+        "action_listen": 0,
+        "action_restart": 1,
+        "action_session_start": 2,
+        "action_default_fallback": 3,
+        "action_deactivate_loop": 4,
+        "action_revert_fallback_events": 5,
+        "action_default_ask_affirmation": 6,
+        "action_default_ask_rephrase": 7,
+        "action_two_stage_fallback": 8,
+        "action_unlikely_intent": 9,
+        "action_back": 10,
+        "...": 11,
+        "action_extract_slots": 12,
+        "action_detect_emotion": 13,
+        "action_retrieve_happy_memory": 14,
+        "action_retrieve_memory": 15,
+        "utter_ask_revisit_memory": 16,
+        "utter_emotion_response": 17,
+        "utter_goodbye": 18,
+        "utter_greet": 19,
+        "utter_happy": 20,
+        "utter_okay_no_memory": 21
+      },
+      "entities": {},
+      "slots": {
+        "last_question_0": 0,
+        "asked_memory_0": 1,
+        "asked_memory_1": 2
+      },
+      "active_loop": {}
+    }
+  },
+  "remove_duplicates": true,
+  "max_history": 5
+}

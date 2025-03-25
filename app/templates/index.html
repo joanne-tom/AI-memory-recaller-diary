@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MEMOIR</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@800&family=NTR&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        overflow-x: hidden;
+      }
+
+      .landing-container {
+        width: 100%;
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .header-wrapper {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 42px 54px;
+        z-index: 1;
+      }
+
+      .brand-logo {
+        font-family: "Inter", sans-serif;
+        font-size: 36px;
+        font-weight: 800;
+        color: #ffffff;
+        margin: 0;
+      }
+
+      .main-navigation {
+        display: flex;
+        align-items: center;
+        gap: 115px;
+      }
+
+      .nav-link {
+        font-family: "NTR", sans-serif;
+        font-size: 24px;
+        color: #ffffff;
+        text-decoration: none;
+      }
+
+      .nav-link:hover {
+        transform: scale(1.1);
+      }
+
+      .login-button {
+        font-family: "Inter", sans-serif;
+        font-size: 24px;
+        font-weight: 800;
+        color: #ffffff;
+        border: 3px solid #ffffff;
+        border-radius: 10px;
+        padding: 0 20px;
+        height: 31px;
+        margin-left: 88px;
+        display: flex;
+        align-items: center;
+      }
+
+      .background-wrapper {
+        width: 100%;
+        height: 100vh;
+        position: relative;
+      }
+
+      .background-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .quote-container {
+        position: absolute;
+        bottom: 50px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        background: rgba(255, 255, 255, 0.9);
+        padding: 15px 20px;
+        border-radius: 8px;
+      }
+
+      .polaroid-quote {
+        font-family: "Shadows Into Light", cursive;
+        font-size: 18px;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .quote-author {
+        font-family: "NTR", sans-serif;
+        font-size: 14px;
+        color: #666;
+      }
+
+      @media (max-width: 991px) {
+        .header-wrapper {
+          padding: 32px 24px;
+        }
+
+        .main-navigation {
+          gap: 60px;
+        }
+
+        .login-button {
+          margin-left: 40px;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .header-wrapper {
+          padding: 24px 16px;
+        }
+
+        .brand-logo {
+          font-size: 28px;
+        }
+
+        .main-navigation {
+          display: none;
+        }
+
+        .login-button {
+          font-size: 20px;
+          padding: 0 16px;
+          height: 28px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="landing-container">
+      <header class="header-wrapper">
+        <h1 class="brand-logo">MEMOIR</h1>
+        <nav class="main-navigation">
+          <a href="{{ url_for('main.index') }}" class="nav-link">Home</a>
+          <a href="{{ url_for('main.contact') }}" class="nav-link">Contact</a>
+          <a href="{{ url_for('main.about') }}" class="nav-link">About</a>
+          <a href="{{ url_for('main.login_page') }}" class="nav-link login-button">Login</a>
+        </nav>
+      </header>
+
+      <section class="background-wrapper">
+        <img
+          src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced"
+          alt="Background"
+          class="background-image"
+        />
+
+        <div class="quote-container">
+          <p class="polaroid-quote">
+            "Your memories are the pages of your story."
+          </p>
+          <p class="quote-author">- MEMOIR</p>
+        </div>
+      </section>
+    </main>
+  </body>
+</html>
