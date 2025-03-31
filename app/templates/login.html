@@ -338,5 +338,11 @@
         </div>
       </div>
     </main>
+    <script>
+      document.querySelector(".login-form").addEventListener("submit", function(event) {
+        const email = document.getElementById("email").value;
+        localStorage.setItem("userEmail", email);
+      });
+    </script> 
   </body>
 </html>
