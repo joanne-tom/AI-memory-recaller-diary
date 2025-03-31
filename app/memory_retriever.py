@@ -3,6 +3,9 @@ import google.generativeai as genai
 from sentence_transformers import SentenceTransformer
 from pymongo import MongoClient
 import os
+import random
+
+GEMINI_API_KEY = 'AIzaSyCJMxfkxP-QRAcdVW6Jo8M1tSa37d-n0wY'
 
 # Setup MongoDB
 mongo_client = MongoClient("mongodb://localhost:27017/")  
@@ -17,13 +20,13 @@ memory_collection = chroma_client.get_or_create_collection(name="user_memories")
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 
 # Google Gemini API (Use environment variable for security)
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=GEMINI_API_KEY)
 
 # Function to detect emotion
 def detect_emotion(user_input):
     try:
-        model = genai.GenerativeModel("gemini-pro")
-        prompt = f"Detect the emotion in the following user input: '{user_input}'. Respond with just the emotion (joy, sadness, anger, fear, confusion, pessimism, disgust)."
+        model = genai.GenerativeModel("gemini-1.5-pro-002")
+        prompt = f"Detect the emotion in the following user input: '{user_input}'. Respond with just the emotion (joy, sadness, anger, fear, anticipation, optimism, love, surprise, trust, pessimism, disgust)."
         response = model.generate_content(prompt)
         return response.text.strip().lower()
     except Exception as e:
@@ -52,30 +55,53 @@ def migrate_memories():
         )
         print(f"✅ Memory stored: {memory_text} ({emotion})")
 
-# Function to retrieve memory
-def retrieve_memory(user_id, emotion):
+def retrieve_memory(user_id, emotion, user_input):
     # Define opposite emotions for better responses
     opposite_emotion = {
-        "sad": "joy", "anger": "joy", "pessimism": "optimism",
-        "afraid": "trust", "disgust": "love", "surprise": "anticipation"
+        "sadness": "joy", "anger": "joy", "pessimism": "optimism",
+        "fear": "trust", "disgust": "love", "surprise": "anticipation"
     }.get(emotion, "joy")  # Default to "joy"
 
+    # Debug step: Check stored memories
+    all_memories = memory_collection.get(where={"user_id": user_id})
+    print(f"🔍 All Memories Retrieved for {user_id}: {all_memories}")  # Debugging
+
+    # Ensure we extract metadata properly
+    happy_memories = []
+    for metadata in all_memories["metadatas"]:  # Extract stored metadata
+        if metadata["emotion"] == opposite_emotion:
+            happy_memories.append(metadata["text"])
+
+    if not happy_memories:
+        return "No relevant memories found."
+
+    # Retrieve relevant memories using embeddings
     results = memory_collection.query(
-        query_embeddings=[embedding_model.encode(opposite_emotion).tolist()],  
-        n_results=1,
-        where={"user_id": user_id, "emotion": opposite_emotion}  
+        query_embeddings=[embedding_model.encode(user_input).tolist()],  
+        n_results=5,  
+        where={"user_id": user_id}  
     )
-    
-    if results["documents"]:
-        return results["documents"][0]
+
+    print(f"🔍 Query Results: {results}")  # Debugging
+
+    # Ensure correct document structure
+    filtered_results = []
+    for i, metadata_list in enumerate(results["metadatas"]):
+        for metadata in metadata_list:  # Each metadata_list contains multiple dicts
+            if metadata["emotion"] == opposite_emotion:
+                filtered_results.append(metadata["text"])
+
+    if filtered_results:
+        return random.choice(filtered_results)
     else:
         return "No relevant memories found."
+
 
 # Chat with user
 def chat_with_user(user_id, user_input):
     emotion = detect_emotion(user_input)
     if emotion in ["sadness", "anger", "pessimism", "fear", "disgust"]:
-        memory = retrieve_memory(user_id, emotion)
+        memory = retrieve_memory(user_id, emotion, user_input)
         return f"I sense you're feeling {emotion}. Here’s a happy memory: {memory}"
     else:
         return "I'm glad you're feeling good! Tell me more!"
