@@ -5,8 +5,11 @@ from pymongo import MongoClient
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.bert_emotions_classifier import classify_text
 import requests
+from app.memory_retriever import chat_with_user,detect_emotion
 
 main = Blueprint("main", __name__)
+
+GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText'
 
 # 🏠 Home Route
 @main.route("/", methods=["GET"])
@@ -189,29 +192,33 @@ def chat_page():
     return render_template("chat.html")  # Renders the chat page
 
 @main.route("/chat_api", methods=["POST"])
-def chat_api():
-    data = request.get_json()
-    user_message = data.get("message", "")
+def chat():
+    data = request.json
+    user_id = data.get("user_id")
+    user_input = data.get("message").strip().lower()
 
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
+    if not user_id or not user_input:
+        return jsonify({"error": "Missing user_id or message"}), 400
 
-    rasa_url = "http://localhost:5005/webhooks/rest/webhook"
-    payload = {"sender": "user", "message": user_message}
-    response = requests.post(rasa_url, json=payload)
+    # Step 1: Check if the user is greeting
+    greetings = ["hi", "hello", "hey"]
+    if user_input in greetings:
+        return jsonify({"response": "How are you feeling today?"})
 
-    try:
-        bot_response = response.json()
-        if bot_response:
-            reply = bot_response[0].get("text", "Sorry, I didn't understand that.")
-        else:
-            reply = "Sorry, no response from the bot."
-    except Exception as e:
-        reply = f"Error: {str(e)}"
+    # Step 2: Detect emotion from user input
+    detected_emotion = detect_emotion(user_input)
 
-    return jsonify({"response": reply})  # Returning JSON response
+    # Step 3: Prevent looping "How are you feeling today?"
+    if detected_emotion is None:
+        return jsonify({"response": "Could you tell me more about how you're feeling?"})
 
-# 😊 3. Retrieve Memories by Emotion & RASA response
+    # Step 4: Respond based on detected emotion
+    response = chat_with_user(user_id, user_input)
+
+    return jsonify({"response": response})
+
+
+"""# 😊 3. Retrieve Memories by Emotion & RASA response
 @main.route("/emotion_based", methods=["GET"])
 def get_emotion_memories():
     if not session.get("logged_in"):
@@ -247,4 +254,4 @@ def get_emotion_memories():
     if not filtered_entries:
         return jsonify({"message": f"No memories found for the emotion: {emotion}."})
 
-    return jsonify({"memories": filtered_entries})
+    return jsonify({"memories": filtered_entries})"""
