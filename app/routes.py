@@ -144,8 +144,10 @@ def search_by_keyword():
                     "content": entry["content"],
                     "timestamp": entry["timestamp"]
                 })
-
-    print(f"Matching Entries: {matching_entries}")  # Debugging: Show final results
+    print('Matching entries:\n')
+    for i in matching_entries:
+        for j in i:
+            print(j)  # Debugging: Show final results
 
     if not matching_entries:
         return jsonify({"message": "No matching entries found."})
@@ -213,7 +215,10 @@ def chat():
         return jsonify({"response": "Could you tell me more about how you're feeling?"})
 
     # Step 4: Respond based on detected emotion
-    response = chat_with_user(user_id, user_input)
+    happy_memory_requested = session.get('happy_memory_requested', False) #get the value, and default to false if not set.
+    response, new_happy_memory_requested = chat_with_user(user_id, user_input, happy_memory_requested)
+
+    session['happy_memory_requested'] = new_happy_memory_requested #set the new value in the session.
 
     return jsonify({"response": response})
 
