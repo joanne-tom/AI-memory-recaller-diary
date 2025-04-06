@@ -7,7 +7,7 @@ import hashlib
 from datetime import datetime
 import pprint
 
-GEMINI_API_KEY = 'AIzaSyAEVUYz3d0YPD5dJk5X41y1-NWHOTwfWlg'
+GEMINI_API_KEY = 'Your_API_Key'
 
 # Setup MongoDB
 mongo_client = MongoClient("mongodb://localhost:27017/")
