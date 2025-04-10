@@ -2,6 +2,7 @@ from flask import Blueprint, request, jsonify, render_template, redirect, sessio
 from app import db
 import hashlib
 import re
+from bson.objectid import ObjectId
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.bert_emotions_classifier import classify_text
 from datetime import datetime,timezone,timedelta
@@ -42,8 +43,8 @@ def register():
     name=data.get('name')
     email = data.get('email')
     password = data.get('password')
-    secret_answer = request.form['secret_answer']
-    hashed_answer = hashlib.sha256(secret_answer.encode()).hexdigest()
+    #secret_answer = request.form['secret_answer']
+    #hashed_answer = hashlib.sha256(secret_answer.encode()).hexdigest()
 
     if not email or not password:
         return "Error: Email and password are required!", 400
@@ -54,7 +55,7 @@ def register():
     
     hashed_password = generate_password_hash(password)  # Hash password before storing
     email_hash = hashlib.sha256(email.encode()).hexdigest()  
-    db.users.insert_one({'name':name, 'email': email,"email_hash": email_hash,"password": hashed_password,"secret_answer": hashed_answer})
+    db.users.insert_one({'name':name, 'email': email,"email_hash": email_hash,"password": hashed_password})
     return redirect(url_for('main.login_page'))
 
 """@main.route('/forgot_password', methods=['GET', 'POST'])
@@ -139,6 +140,13 @@ def write_page():
         return redirect(url_for('main.login_page'))
     return render_template('write.html')
 
+"""
+@main.route('/stack',methods=['GET'])
+def stack():
+    if not session.get('logged_in'):
+        return redirect(url_for('main.login_page'))
+    return render_template('stack.html')"""
+
 @main.route("/save_entry", methods=["POST"])
 def save_entry():
     data = request.json
@@ -162,6 +170,69 @@ def save_entry():
     db.entries.insert_one(entry)  
 
     return jsonify({"message": "Entry saved successfully!", "emotion": classified_emotion})
+
+"""
+@main.route("/view_memories", methods=["GET"])
+def view_memories():
+    if not session.get("logged_in"):
+        return jsonify({"message": "Unauthorized"}), 403
+
+    user_email = session.get("user_email")
+    hashed_user_id = hashlib.sha256(user_email.encode()).hexdigest()
+
+    entries = list(db.entries.find({"user_id": hashed_user_id}, {"_id": 0}))
+    
+    for entry in entries:
+        if "timestamp" in entry:
+            entry["timestamp"] = entry["timestamp"].isoformat()
+
+    return jsonify({"results": entries})
+
+@main.route("/edit_entry/<string:entry_id>", methods=["PUT"])
+def edit_entry(entry_id):
+    if not session.get("logged_in"):
+        return jsonify({"message": "Unauthorized"}), 403
+    
+    data = request.json
+    new_title = data.get("title")
+    new_content = data.get("content")
+    user_email = session.get("user_email")
+    hashed_user_id = hashlib.sha256(user_email.encode()).hexdigest()
+
+    updated_data = {
+        "title": new_title,
+        "content": new_content,
+        "emotion": classify_text(new_content),
+        "timestamp": datetime.now(timezone.utc)
+    }
+
+    result = db.entries.update_one(
+        {"_id": ObjectId(entry_id), "user_id": hashed_user_id},
+        {"$set": updated_data}
+    )
+
+    if result.matched_count == 0:
+        return jsonify({"message": "Entry not found or unauthorized"}), 404
+
+    return jsonify({"message": "Entry updated successfully"})
+
+@main.route("/delete_entry/<string:entry_id>", methods=["DELETE"])
+def delete_entry(entry_id):
+    if not session.get("logged_in"):
+        return jsonify({"message": "Unauthorized"}), 403
+
+    user_email = session.get("user_email")
+    hashed_user_id = hashlib.sha256(user_email.encode()).hexdigest()
+
+    result = db.entries.delete_one({
+        "_id": ObjectId(entry_id),
+        "user_id": hashed_user_id
+    })
+
+    if result.deleted_count == 0:
+        return jsonify({"message": "Entry not found or unauthorized"}), 404
+
+    return jsonify({"message": "Entry deleted successfully"})"""
 
 @main.route("/search_keyword", methods=["GET"])
 def search_by_keyword():

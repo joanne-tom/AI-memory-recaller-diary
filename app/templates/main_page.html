@@ -65,7 +65,7 @@
             font-family: "NTR", sans-serif;
         }
 
-        .profile-button, .search-button {
+        .profile-button, .search-button{
             background: transparent;
             border: 2px solid white;
             color: white;
@@ -76,6 +76,23 @@
             font-size: 16px;
             transition: 0.3s;
         }
+
+        /*
+        .memory-button{
+            background: transparent;
+            background: rgb(60, 35, 36);
+            border: 2px solid white;
+            color: rgb(241, 241, 241);
+            padding: 20px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 800;
+            position:absolute;
+            font-size: 16px;
+            transition: 0.3s;
+            bottom: 20px;     
+            left: 20px; 
+        }*/
 
         .profile-button:hover, .search-button:hover {
             background: rgba(255, 255, 255, 0.1);
@@ -272,6 +289,18 @@
             height: auto; 
         }
 
+        /*
+        .memories-section {
+            position: absolute; 
+            bottom: 0; 
+            width: 100%; 
+            display: flex;
+            justify-content: center; 
+            padding: 20px 0; 
+        }
+        */
+
+
         .close-search {
             position: absolute;
             top: 15px;
@@ -302,9 +331,12 @@
             <img src="{{ url_for('static', filename='pictures/sun.jpg') }}"
           alt="Diary"
           class="diary-image"
-        />
+        /> 
             <button class="write-button" onclick="location.href='/write'">Write here...</button>
         </div>
+        <!--<div class="memories-section">
+            <button class="memory-button" onclick="location.href='/stack'">Memories..</button>
+        </div>-->
 
         <div class="search-panel">
     <span class="close-search" onclick="toggleSearch()">×</span>
