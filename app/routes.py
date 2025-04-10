@@ -42,8 +42,8 @@ def register():
     name=data.get('name')
     email = data.get('email')
     password = data.get('password')
-    secret_answer = request.form['secret_answer']
-    hashed_answer = hashlib.sha256(secret_answer.encode()).hexdigest()
+    #secret_answer = request.form['secret_answer']
+    #hashed_answer = hashlib.sha256(secret_answer.encode()).hexdigest()
 
     if not email or not password:
         return "Error: Email and password are required!", 400
@@ -54,7 +54,7 @@ def register():
     
     hashed_password = generate_password_hash(password)  # Hash password before storing
     email_hash = hashlib.sha256(email.encode()).hexdigest()  
-    db.users.insert_one({'name':name, 'email': email,"email_hash": email_hash,"password": hashed_password,"secret_answer": hashed_answer})
+    db.users.insert_one({'name':name, 'email': email,"email_hash": email_hash,"password": hashed_password})
     return redirect(url_for('main.login_page'))
 
 """@main.route('/forgot_password', methods=['GET', 'POST'])
