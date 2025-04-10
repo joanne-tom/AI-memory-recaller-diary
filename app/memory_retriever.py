@@ -19,7 +19,6 @@ memory_collection = chroma_client.get_or_create_collection(name="user_memories")
 # Fetch all stored memories from ChromaDB
 all_stored_memories = memory_collection.get()
 
-# Check if there are existing memories
 if all_stored_memories and "ids" in all_stored_memories:
     existing_ids = all_stored_memories["ids"]
     
@@ -31,6 +30,7 @@ if all_stored_memories and "ids" in all_stored_memories:
         print("🛑 No records found to delete.")
 else:
     print("🛑 No records found in ChromaDB.")
+
 
 print("ChromaDB initialized successfully!")
 
@@ -101,6 +101,14 @@ def migrate_memories(user_id):
 
         print(f"➕ Adding new memory to ChromaDB: {memory_text}")
 
+        # Get timestamp from MongoDB or use current time
+        timestamp = memory.get("created_at", datetime.now()).isoformat()
+
+        # Include the user's email in the metadata
+        user_email = user_id  # Add email from MongoDB
+
+        print(f"➕ Adding new memory to ChromaDB: {memory_text}")
+
         memory_collection.add(
             ids=[memory_id],  # Use unique hashed ID
             embeddings=[embedding],
@@ -131,13 +139,9 @@ def retrieve_memory(user_id, emotion, user_input):
     # Filter memories based on user's emotion
     relevant_memories = []
     for meta in all_stored_memories["metadatas"]:
-        print('hello')
-        print(f'user id of texts: {meta["user_id"]}')
         if meta["emotion"] == opposite_emotion and meta["email"] == user_id:  # Compare with actual user_id in metadata
             relevant_memories.append(meta)
-    print(f"Emotion requested: {emotion}")
-    print(f"opp Emotion requested: {opposite_emotion}")
-    print(f'hello user id:{user_id}')
+
     print(f"Relevant memories found: {relevant_memories}")
 
     # If no relevant memories are found, return a message
