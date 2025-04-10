@@ -284,8 +284,8 @@
 </head>
 <body>
     <div class="page-container">
-        <!--<img src="{{ url_for('static', filename='pictures/main.png') }}" alt="Background" class="background-image" />-->
-        <img src="https://cdn.builder.io/api/v1/image/assets/f744a533914648bbb617ec08354cf43b/617b5d61c54e224ade23ee5b03410397474ad5bcc3daa1cb012d816d86ab2f5d?placeholderIfAbsent=true" alt="Background" class="background-image" />
+        <img src="{{ url_for('static', filename='pictures/main.png') }}" alt="Background" class="background-image" />
+        <!--<img src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced" alt="Background" class="background-image" />-->
 
         <header class="header-content">
             <h1 class="brand-title">MEMOIR</h1>
@@ -300,11 +300,11 @@
         </header>
 
         <div class="writing-section">
-            <!--<img src="{{ url_for('static', filename='pictures/sun.jpg') }}"-->
-            <img src="{{ url_for('static', filename='pictures/diary.jpg') }}"
+            <!--<img src="{{ url_for('static', filename='pictures/diary.jpg') }}"-->
+            <img src="{{ url_for('static', filename='pictures/sun.jpg') }}"
           alt="Diary"
           class="diary-image"
-        />
+        /> 
             <button class="write-button" onclick="location.href='/write'">Write here...</button>
         </div>
 
