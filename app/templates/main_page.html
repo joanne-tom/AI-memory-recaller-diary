@@ -120,7 +120,7 @@
         .logout-button {
             margin-top: 20px;
             padding: 8px 16px;
-            background: #ff4444;
+            background: #405daf;
             border: none;
             color: white;
             border-radius: 5px;
@@ -131,13 +131,14 @@
 
         .writing-section {
             position: relative;
-            width: 300px;
-            height: 360px;
+            width: 270px;
+            height: 270px;
             margin: 40px 0 0 46px;
             cursor: pointer;
             transition: 0.3s;
             border-radius: 16px;
             overflow: hidden;
+            clip-path: circle(50% at 50% 50%);
             box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3);
         }
 
@@ -146,38 +147,45 @@
             bottom: 20px;
             left: 50%;
             transform: translateX(-50%);
-            background: rgba(48, 2, 2, 0.9);
+            background: rgb(60, 35, 36);
             color: white;
-            border: 2px solid white;
-            padding: 8px 24px;
+            border: 2px solid rgb(162, 104, 53);
+            padding: 8px 16px;
             border-radius: 8px;
             cursor: pointer;
             font-family: "Joan", serif;
-            font-size: 18px;
+            font-size: 15px;
         }
         .chat-section {
         position: relative;
         max-width: 900px;
         width: 80%;
         margin: 40px auto 0;
-        background: rgba(217, 217, 217, 0.124);
+        background: rgba(103, 63, 65, 0.64);
         border-radius: 25px;
         padding: 12px 24px;
         display: flex;
         align-items: center;
+        border: 2px solid rgb(255, 255, 255);
       }
 
       .chat-input {
         flex: 1;
         background: transparent;
         border: none;
-        color: white;
+        color:#ba234c;
         font-family: "Joan", serif;
         font-size: 16px;
-        outline: none;
+        outline:none;
         padding: 12px;
         min-width: 200px;
       }
+
+      .chat-input::placeholder {
+        color: rgb(255, 255, 255); 
+        font-family: "Joan", serif;
+        font-size: 18px;
+    }
 
       .send-button {
         background: none;
@@ -195,20 +203,32 @@
       .send-button:hover .send-icon {
         transform: scale(1.1);
       }
-        .search-panel {
-            position: fixed;
-            right: -350px;
-            top: 0;
-            width: 320px;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            transition: 0.3s;
-            z-index: 1000;
+      .search-panel {
+        position: fixed;
+        right: -350px;
+        top: 0;
+        width: 320px;
+        height: 100vh;
+        background: rgb(63, 58, 58);
+        padding: 20px;
+        transition: 0.3s;
+        z-index: 1000;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden; /* keeps everything tidy */
         }
 
         .search-panel.active {
             right: 0;
+        }
+
+        .search-panel input[type="text"] {
+            width: 80%; 
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 8px;
+            border: none;
+            margin-top: 15px;
         }
 
         .search-panel input[type="date"] {
@@ -224,7 +244,7 @@
             width: 100%;
             padding: 10px;
             font-size: 16px;
-            background: #ff4444;
+            background: rgb(162, 104, 53);
             border: none;
             color: white;
             border-radius: 5px;
@@ -236,12 +256,20 @@
             margin-top: 15px;
             font-size: 14px;
             color: white;
+            overflow-y: auto;
+            flex-grow: 1; /* take up remaining space */
         }
 
         .search-panel h2 {
             font-size: 22px;
             color: white;
             margin-bottom: 20px;
+            width: 100%;
+        }
+
+        .diary-image {
+            width: 100%; 
+            height: auto; 
         }
 
         .close-search {
@@ -256,7 +284,7 @@
 </head>
 <body>
     <div class="page-container">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced" alt="Background" class="background-image" />
+        <img src="{{ url_for('static', filename='pictures/main.png') }}" alt="Background" class="background-image" />
 
         <header class="header-content">
             <h1 class="brand-title">MEMOIR</h1>
@@ -271,35 +299,48 @@
         </header>
 
         <div class="writing-section">
+            <img src="{{ url_for('static', filename='pictures/sun.jpg') }}"
+          alt="Diary"
+          class="diary-image"
+        />
             <button class="write-button" onclick="location.href='/write'">Write here...</button>
         </div>
 
         <div class="search-panel">
     <span class="close-search" onclick="toggleSearch()">×</span>
-    <h2>Search by Keyword</h2>
+    <h2>Search Journal</h2>
+    <label for="keywordInput">Keyword:</label>
     <input type="text" id="keywordInput" placeholder="Enter a keyword..." />
-    <button onclick="searchEntries()">Search</button>
+    <button onclick="searchEntriesKeyword()">Search</button>
+    <br>
+    <br>
+    <label for="dateInput" style="margin-top:10px;">Date:</label>
+    <input type="date" id="dateInput" />
+
+    <button onclick="searchEntriesDate()">Search</button>
+
     <div class="search-results" id="searchResults"></div>
 </div>
 
         <div class="profile-panel">
             <button class="close-panel" onclick="toggleProfile()">&times;</button>
             <div class="profile-info">
+                <br>
                 <h3>Profile</h3>
                 <p>Username: <span id="username">{{ name }}</span></p>
                 <p>Email: <span id="email">{{ email }}</span></p>
-                <button class="logout-button" onclick="handleLogout()">Logout</button>
+                <button class="logout-button" onclick="window.location.href='/logout'">Logout</button>
             </div>
         </div>
-        <div class="chat-section">
+        <div class="chat-section" id="chatButton">
             <input
                 type="text"
-                id="chatInput"  
+                id="chatInput"
                 class="chat-input"
-                placeholder="Tell Memoir how you feel today..."
-            />
-            <button class="send-button" onclick="handleChat()"> 
-                <img
+                placeholder="Tell Memoir how you feel today...(Click here to chat)" 
+                readonly 
+                style="cursor: pointer;"/>
+            <button class="send-button" style="pointer-events: none; opacity: 0.5;"> <img
                     src="https://cdn.builder.io/api/v1/image/assets/f744a533914648bbb617ec08354cf43b/617b5d61c54e224ade23ee5b03410397474ad5bcc3daa1cb012d816d86ab2f5d?placeholderIfAbsent=true"
                     alt="Send"
                     class="send-icon"
@@ -311,33 +352,25 @@
 
     <div id="chatResponse" style="color: white; margin-top: 20px;"></div>
 
-<script>
-    async function handleChat() {
-    const userInput = document.getElementById('chatInput').value;
-    
-    if (!userInput.trim()) {
-        alert("Please enter a message.");
-        return;
-    }
-
-    // Clear the input field
-    document.getElementById('chatInput').value = '';
-
-    // Redirect to chat.html with query parameter
-    window.location.href = `/chat?message=${encodeURIComponent(userInput)}`;
-    }
-</script>
-
     <script>
-        function toggleProfile() {
-            document.querySelector(".profile-panel").classList.toggle("active");
+        function handleChat() {
+            window.location.href = "/chat";
         }
+    
+        document.getElementById("chatButton").addEventListener("click", handleChat);
+    </script>    
 
-        function toggleSearch() {
-            document.querySelector(".search-panel").classList.toggle("active");
-        }
+<script>
+    function toggleProfile() {
+        document.querySelector(".profile-panel").classList.toggle("active");
+    }
 
-        async function searchEntries() {
+    function toggleSearch() {
+        document.querySelector(".search-panel").classList.toggle("active");
+    }
+
+    // Function to handle searching by keyword
+    async function searchEntriesKeyword() {
     const keyword = document.getElementById("keywordInput").value.trim();
 
     if (!keyword) {
@@ -345,24 +378,121 @@
         return;
     }
 
-    const response = await fetch(`/search?keyword=${encodeURIComponent(keyword)}`);
-    const data = await response.json();
+    try {
+        const response = await fetch(`/search_keyword?keyword=${encodeURIComponent(keyword)}`);
+        const data = await response.json();
 
-    console.log("Response received:", data);  // Debugging
+        console.log("Search results by keyword:", data);  // Log the full response
 
-    const resultsDiv = document.getElementById("searchResults");
-    resultsDiv.innerHTML = ""; // Clear previous results
+        const resultsDiv = document.getElementById("searchResults");
+        resultsDiv.innerHTML = ""; // Clear old results
 
-    if (data.results && data.results.length > 0) {
-        data.results.forEach(entry => {
-            const entryDiv = document.createElement("div");
-            entryDiv.innerHTML = `<p><strong>${entry.timestamp} ${entry.title}</strong>: ${entry.content}</p>`;
-            resultsDiv.appendChild(entryDiv);
-        });
-    } else {
-        resultsDiv.innerHTML = `<p>No results found.</p>`;
+        if (data.results && data.results.length > 0) {
+            data.results.forEach(entry => {
+                let shortTimestamp = "No timestamp available";
+                
+                // Ensure timestamp is handled correctly
+                if (entry.timestamp) {
+                    const timestampDate = new Date(entry.timestamp); // Convert to JavaScript Date
+                    shortTimestamp = timestampDate.toISOString().substring(0, 10); // Extract date part
+                }
+
+                const entryDiv = document.createElement("div");
+                entryDiv.innerHTML = `<p><strong><u>${entry.title}</u></strong><br><strong>${shortTimestamp}</strong>: ${entry.content}</p>`;
+                resultsDiv.appendChild(entryDiv);
+            });
+        } else {
+            resultsDiv.innerHTML = `<p>No results found for that keyword.</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching keyword search results:", error);
     }
 }
+
+async function searchEntriesDate() {
+    const date = document.getElementById("dateInput").value;
+
+    if (!date) {
+        alert("Please select a date to search.");
+        return;
+    }
+
+    try {
+        console.log('Searching for date:', date);
+        const response = await fetch(`/search_date?date=${encodeURIComponent(date)}`);
+        const data = await response.json();
+
+        console.log("Search results by date:", data);
+
+        const resultsDiv = document.getElementById("searchResults");
+        resultsDiv.innerHTML = ""; // Clear old results
+
+        if (data.results && data.results.length > 0) {
+            data.results.forEach(entry => {
+                let shortTimestamp = "No timestamp available";
+
+                // Ensure timestamp is a string
+                if (entry.timestamp) {
+                    const timestampString = entry.timestamp.toString(); // Convert to string
+                    shortTimestamp = timestampString.substring(15, 16); // Extract time part (HH:MM)
+                }
+
+                const entryDiv = document.createElement("div");
+                entryDiv.innerHTML = `<p><strong><u>${entry.title}</u></strong><br> ${entry.content}</p>`;
+                resultsDiv.appendChild(entryDiv);
+            });
+        } else {
+            resultsDiv.innerHTML = `<p>No results found for that date.</p>`;
+        }
+    } catch (error) {
+        console.error("Error fetching date search results:", error);
+    }
+}
+
+    /*
+    // Function to handle search when either keyword or date is entered
+    async function searchEntries() {
+        const keyword = document.getElementById("keywordInput").value.trim();
+        const date = document.getElementById("dateInput").value;
+
+        if (!keyword && !date) {
+            alert("Please enter a keyword or select a date to search.");
+            return;
+        }
+
+        const queryParams = new URLSearchParams();
+        let searchUrl = "";
+
+        if (keyword && date) {
+            searchUrl = `/search_keyword?${queryParams.append("keyword", keyword)}&${queryParams.append("date", date)}`;
+        } else if (keyword) {
+            searchUrl = `/search_keyword?${queryParams.append("keyword", keyword)}`;
+        } else if (date) {
+            searchUrl = `/search_date?${queryParams.append("date", date)}`;
+        }
+
+        try {
+            const response = await fetch(searchUrl);
+            const data = await response.json();
+
+            console.log("Search results:", data);
+
+            const resultsDiv = document.getElementById("searchResults");
+            resultsDiv.innerHTML = ""; // Clear old results
+
+            if (data.results && data.results.length > 0) {
+                data.results.forEach(entry => {
+                    const entryDiv = document.createElement("div");
+                    entryDiv.innerHTML = `<p><strong>${entry.timestamp} ${entry.title}</strong>: ${entry.content}</p>`;
+                    resultsDiv.appendChild(entryDiv);
+                });
+            } else {
+                resultsDiv.innerHTML = `<p>No results found.</p>`;
+            }
+        } catch (error) {
+            console.error("Error fetching search results:", error);
+        }
+    } */
 </script>
 </body>
 </html>

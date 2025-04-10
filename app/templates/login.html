@@ -187,7 +187,7 @@
       .remember-me {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 8px;
         cursor: pointer;
       }
 
@@ -196,8 +196,16 @@
       }
 
       .checkbox-input {
-        position: absolute;
-        opacity: 0;
+        width: 18px;
+        height: 18px;
+        border-radius: 2px;
+        border: 2px solid #fff;
+        background-color: transparent;
+      }
+
+      .checkbox-input:checked {
+        background-color: #5cb85c;
+        border-color: #5cb85c;
       }
 
       .checkbox-custom {
@@ -213,7 +221,7 @@
         color: #c5c9b2;
         font-family: "NTR", sans-serif;
         font-size: 16px;
-        text-decoration: none;
+        cursor: pointer;
       }
 
       .login-submit {
@@ -268,7 +276,7 @@
     <main class="login-page">
       <img
         src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced?placeholderIfAbsent=true"
-        alt=""
+        alt="Background"
         class="background-image"
       />
 
@@ -279,7 +287,6 @@
             <li><a href="{{url_for('main.index')}}" class="nav-link">Home</a></li>
             <li><a href="{{url_for('main.contact')}}" class="nav-link">Contact</a></li>
             <li><a href="{{url_for('main.about')}}" class="nav-link">About</a></li>
-            <li><a href="{{url_for('main.login_page')}}" class="nav-link">Login</a></li>
           </ul>
           <button class="mobile-menu-toggle" aria-label="Toggle menu">☰</button>
         </div>
@@ -314,13 +321,10 @@
 
             <div class="form-options">
               <label class="remember-me">
-                <span class="checkbox-wrapper">
-                  <input type="checkbox" class="checkbox-input" />
-                  <span class="checkbox-custom"></span>
-                </span>
+                <input type="checkbox" class="checkbox-input" name="remember_me" id="remember_me" />
                 <span class="checkbox-label">Remember me</span>
               </label>
-              <a href="#" class="forgot-password">Forget password</a>
+              <!--<a href="/forgot_password" class="forgot-password">Forgot password</a>-->
             </div>
 
             <button type="submit" class="login-submit">Login</button>
@@ -331,7 +335,7 @@
           </form>
 
             <div class="register-prompt">
-              <span>Don't have an account ?</span>
+              <span>Don't have an account?</span>
               <a href="{{url_for('main.registration_page')}}" class="register-link">Register</a>
             </div>
           </form>

@@ -90,28 +90,126 @@
         object-fit: cover;
       }
 
-      .quote-container {
+      .polaroid-container {
         position: absolute;
-        bottom: 50px;
-        left: 50%;
-        transform: translateX(-50%);
-        text-align: center;
-        background: rgba(255, 255, 255, 0.9);
-        padding: 15px 20px;
-        border-radius: 8px;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 60%;
+        z-index: 2;
+        pointer-events: none;
+    display: flex; /* Enable Flexbox */
+    flex-wrap: wrap; /* Allow polaroids to wrap to the next line */
+    justify-content: center; /* Center polaroids horizontally */
+    align-items: flex-start; /* Align items to the top of each line */
+    padding: 20px; /* Add some padding around the polaroids */
+    gap: 30px; /* Add spacing between polaroids */
+}
+
+      .polaroid {
+        position: absolute;
+        background: #1a192d;
+        padding: 10px 10px 30px;
+        padding-bottom: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        transform: rotate(var(--rotation));
+        transition: all 0.3s ease;
+        cursor: pointer;
+        pointer-events: auto;
+        width: 230px;
+        animation: float 6s ease-in-out infinite;
+        animation-delay: var(--delay);
+      }
+
+      .polaroid:hover {
+        transform: rotate(0) scale(1.1);
+        z-index: 5;
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      }
+
+      .polaroid-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+      }
+
+      .quote-container {
+            text-align: center;
+            background: rgba(193, 185, 185, 0.9);
+            padding: 10px 20px;
+            border-radius: 8px;
+            margin-top: 5px; /* Added margin */
+        }
+
+      .polaroid:hover .quote-container {
+        opacity: 1;
       }
 
       .polaroid-quote {
         font-family: "Shadows Into Light", cursive;
-        font-size: 18px;
+        font-size: 15px;
         color: #333;
         margin-bottom: 5px;
+        text-align: left;
       }
 
       .quote-author {
         font-family: "NTR", sans-serif;
-        font-size: 14px;
+        font-size: 12px;
         color: #666;
+      }
+
+      /* Positioned polaroids */
+      .polaroid:nth-child(1) {
+        top: 25%;
+        left: 5%;
+        --rotation: -10deg;
+        --delay: 0s;
+      }
+
+      .polaroid:nth-child(2) {
+        top: 25%;
+        left: 35%;
+        --rotation: 3deg;
+        --delay: 1s;
+      }
+
+      .polaroid:nth-child(3) {
+        top: 25%;
+        right: 23%;
+        --rotation: 5deg;
+        --delay: 2s;
+      }
+
+      .polaroid:nth-child(4) {
+        top: 45%;
+        left: 20%;
+        --rotation: 10deg;
+        --delay: 1.5s;
+      }
+
+      .polaroid:nth-child(5) {
+        top: 50%;
+        right: 10%;
+        --rotation: 8deg;
+        --delay: 0.5s;
+      }
+
+      .polaroid:nth-child(6) {
+        top: 50%;
+        left: 48%;
+        --rotation: -2deg;
+        --delay: 2.5s;
+      }
+
+      @keyframes float {
+        0%,
+        100% {
+          transform: rotate(var(--rotation)) translateY(0);
+        }
+        50% {
+          transform: rotate(var(--rotation)) translateY(-15px);
+        }
       }
 
       @media (max-width: 991px) {
@@ -126,6 +224,14 @@
         .login-button {
           margin-left: 40px;
         }
+
+        .polaroid {
+          width: 200px;
+        }
+
+        .polaroid-image {
+          height: 50px;
+        }
       }
 
       @media (max-width: 640px) {
@@ -139,6 +245,42 @@
 
         .main-navigation {
           display: none;
+        }
+
+        .polaroid {
+          width: 50px;
+        }
+
+        .polaroid-image {
+          height: 50px;
+        }
+
+        .polaroid-quote {
+          font-size: 14px;
+        }
+
+        .quote-author {
+          font-size: 7px;
+        }
+
+        /* Adjust positions for mobile */
+        .polaroid:nth-child(1) {
+          left: 5%;
+        }
+        .polaroid:nth-child(2) {
+          left: 25%;
+        }
+        .polaroid:nth-child(3) {
+          right: 5%;
+        }
+        .polaroid:nth-child(4) {
+          left: 10%;
+        }
+        .polaroid:nth-child(5) {
+          right: 15%;
+        }
+        .polaroid:nth-child(6) {
+          left: 30%;
         }
 
         .login-button {
@@ -161,18 +303,74 @@
         </nav>
       </header>
 
-      <section class="background-wrapper">
+      <section class="hero-section">
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/15e4b644c1f18d0492cd196ba2cd856ecbeecced"
           alt="Background"
           class="background-image"
         />
 
-        <div class="quote-container">
-          <p class="polaroid-quote">
-            "Your memories are the pages of your story."
-          </p>
-          <p class="quote-author">- MEMOIR</p>
+        <div class="polaroid-container">
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/travel.jpg') }}" alt="Travel Memory" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">
+                "Life is not measured by the breaths we take, but by the moments
+                that take our breath away."
+              </p>
+              <p class="quote-author">- Maya Angelou</p>
+            </div>
+          </div>
+
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/nature.jpg') }}" alt="Nature Scene" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">
+                "In every walk with nature, one receives far more than he
+                seeks."
+              </p>
+              <p class="quote-author">- John Muir</p>
+            </div>
+          </div>
+
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/city.jpg') }}" alt="City Life" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">
+                "The city is not a concrete jungle, it is a human zoo."
+              </p>
+              <p class="quote-author">- Desmond Morris</p>
+            </div>
+          </div>
+
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/friend.jpg') }}" alt="Friendship" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">
+                "A friend is someone who knows all about you and still loves
+                you."
+              </p>
+              <p class="quote-author">- Elbert Hubbard</p>
+            </div>
+          </div>
+
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/adventure.jpg') }}" alt="Adventure" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">"Adventure is worthwhile in itself."</p>
+              <p class="quote-author">- Amelia Earhart</p>
+            </div>
+          </div>
+
+          <div class="polaroid">
+            <img src="{{ url_for('static', filename='pictures/sun.jpg') }}" alt="Sunset" class="polaroid-image" />
+            <div class="quote-container">
+              <p class="polaroid-quote">
+                "Every sunset brings the promise of a new dawn."
+              </p>
+              <p class="quote-author">- Ralph Waldo Emerson</p>
+            </div>
+          </div>
         </div>
       </section>
     </main>

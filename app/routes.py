@@ -1,12 +1,15 @@
-from flask import Blueprint, request, jsonify, render_template, redirect, session, url_for
+from flask import Blueprint, request, jsonify, render_template, redirect, session, url_for,current_app,flash
 from app import db
-import random
-from pymongo import MongoClient
+import hashlib
+import re
 from werkzeug.security import generate_password_hash, check_password_hash
 from app.bert_emotions_classifier import classify_text
-import requests
+from datetime import datetime,timezone,timedelta
+from app.memory_retriever import chat_with_user
 
 main = Blueprint("main", __name__)
+
+GEMINI_URL='https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateText'
 
 # 🏠 Home Route
 @main.route("/", methods=["GET"])
@@ -39,6 +42,8 @@ def register():
     name=data.get('name')
     email = data.get('email')
     password = data.get('password')
+    secret_answer = request.form['secret_answer']
+    hashed_answer = hashlib.sha256(secret_answer.encode()).hexdigest()
 
     if not email or not password:
         return "Error: Email and password are required!", 400
@@ -48,8 +53,43 @@ def register():
         return render_template("registration.html", error="Email already exists!")
     
     hashed_password = generate_password_hash(password)  # Hash password before storing
-    db.users.insert_one({'name':name,"email": email, "password": hashed_password})
+    email_hash = hashlib.sha256(email.encode()).hexdigest()  
+    db.users.insert_one({'name':name, 'email': email,"email_hash": email_hash,"password": hashed_password,"secret_answer": hashed_answer})
     return redirect(url_for('main.login_page'))
+
+"""@main.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        answer = request.form['secret_answer']
+        hashed_answer = hashlib.sha256(answer.encode()).hexdigest()
+
+        user = db.users.find_one({"email": email, "secret_answer": hashed_answer})
+        if user:
+            session['reset_email'] = email
+            return redirect('/reset_password')
+        else:
+            flash("Incorrect email or answer", "danger")
+    return render_template('forgot_password.html')
+
+@main.route('/reset_password', methods=['GET', 'POST'])
+def reset_password():
+    if 'reset_email' not in session:
+        return redirect('/login')
+
+    if request.method == 'POST':
+        new_password = request.form['password']
+        email = session['reset_email']
+        
+        user = db.users.query.filter_by(email=email).first()
+        user.password = generate_password_hash(new_password)  # Hash it!
+        db.session.commit()
+        session.pop('reset_email', None)
+
+        flash("Password reset successful!", "success")
+        return redirect('/login')
+
+    return render_template('reset_password.html')"""
 
 @main.route("/login", methods=["POST"])
 def login():
@@ -61,6 +101,14 @@ def login():
         session['logged_in']=True
         session['user_email'] = email
         session['user_name'] = user.get("name", "Guest")
+        remember_me = data.get("remember_me")  # Get the 'remember me' checkbox value
+
+        if remember_me:
+            # Set a longer expiration time for the session cookie
+            session.permanent = True  # Makes the session permanent (use cookie for long duration)
+            current_app.permanent_session_lifetime = timedelta(days=30)  # Set the session timeout to 30 days
+        else:
+            session.permanent = False
         return redirect(url_for("main.main_page"))
     else:
         return render_template("login.html", error="Invalid email or password.")
@@ -99,119 +147,126 @@ def save_entry():
     user_id=session.get('user_email')
     timestamp = data.get("timestamp", "")
 
+    hashed_user_id = hashlib.sha256(user_id.encode()).hexdigest()
+
     classified_emotion = classify_text(content)
 
     # 🔹 Step 2: Store Entry in Database
     entry = {
-        "user_id": generate_password_hash(user_id),
+        "user_id": hashed_user_id,
         'title':title,
         'content':content,
         "emotion": classified_emotion, 
-        "timestamp": timestamp,
+        'timestamp' : datetime.now(timezone.utc),
     }
     db.entries.insert_one(entry)  
 
     return jsonify({"message": "Entry saved successfully!", "emotion": classified_emotion})
 
-@main.route("/search", methods=["GET"])
+@main.route("/search_keyword", methods=["GET"])
 def search_by_keyword():
     if not session.get("logged_in"):
         return jsonify({"message": "Unauthorized"}), 403
 
-    keyword = request.args.get("keyword", "").strip().lower()
+    keyword = request.args.get("keyword", "").strip()
     if not keyword:
         return jsonify({"message": "Please provide a keyword"}), 400
+    
+    escaped_keyword = re.escape(keyword)
 
     user_email = session.get("user_email")
+    hashed_user_id=hashlib.sha256(user_email.encode()).hexdigest()
+
+    search_filter = {
+    "user_id": hashed_user_id,
+    "$or": [
+        {"title": {"$regex": keyword, "$options": "i"}},
+        {"content": {"$regex": keyword, "$options": "i"}}
+    ]
+}
     
     # Fetch only relevant fields: Exclude _id for cleaner response
-    user_entries = list(db.entries.find({}, {"_id": 0, "user_id": 1, "title": 1, "content": 1, "timestamp": 1}))
-
-    matching_entries = []
+    user_entries = list(db.entries.find(search_filter, {"_id": 0, "user_id": 1, "title": 1, "content": 1, "timestamp": 1}))  
+    
     for entry in user_entries:
-        print(f"Checking entry: {entry}")  # Debugging: Show fetched entries
-        
-        if check_password_hash(entry["user_id"], user_email):  # Match logged-in user
-            print(f"User Matched: {entry['title']}")  # Debugging: Check successful matches
-            
-            # Check if keyword is in title or content
-            if keyword in entry["title"].lower() or keyword in entry["content"].lower():
-                matching_entries.append({
-                    "title": entry["title"],
-                    "content": entry["content"],
-                    "timestamp": entry["timestamp"]
-                })
+        if "timestamp" in entry:
+            entry["timestamp"] = entry["timestamp"].isoformat()
 
-    print(f"Matching Entries: {matching_entries}")  # Debugging: Show final results
-
-    if not matching_entries:
+    if not user_entries:
         return jsonify({"message": "No matching entries found."})
 
-    return jsonify({"results": matching_entries})
+    return jsonify({"results": user_entries})
 
 #searching for date
-# from bson.regex import Regex
-# from datetime import datetime
+from bson.regex import Regex
 
-# @main.route("/search", methods=["GET"])
-# def search_memory():
-#     if not session.get("logged_in"):
-#         return jsonify({"message": "Unauthorized"}), 403
+@main.route("/search_date", methods=["GET"])
+def search_by_date():
+    if not session.get("logged_in"):
+        return jsonify({"message": "Unauthorized"}), 403
 
-#     user_id = session.get("user_email")
-#     date_str = request.args.get("date", "")
+    user_id = session.get("user_email")
+    hashed_user_id = hashlib.sha256(user_id.encode()).hexdigest()
+    date_str = request.args.get("date", "")
 
-#     if not date_str:
-#         return jsonify({"message": "Please select a date"}), 400
+    if not date_str:
+        return jsonify({"message": "Please select a date"}), 400
 
-#     try:
-#         # Convert date string to a datetime object
-#         date_obj = datetime.strptime(date_str, "%Y-%m-%d")
-#         start_date = datetime(date_obj.year, date_obj.month, date_obj.day, 0, 0, 0)
-#         end_date = datetime(date_obj.year, date_obj.month, date_obj.day, 23, 59, 59)
-#     except ValueError:
-#         return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
+    try:
+        # Convert date string to a datetime object
+        date_obj = datetime.strptime(date_str, "%Y-%m-%d")
+        start_date = datetime(date_obj.year, date_obj.month, date_obj.day, 0, 0, 0)
+        end_date = datetime(date_obj.year, date_obj.month, date_obj.day, 23, 59, 59, 999999)
+    except ValueError:
+        return jsonify({"error": "Invalid date format. Use YYYY-MM-DD."}), 400
 
-#     search_filter = {
-#         "user_id": user_id,
-#         "timestamp": {"$gte": start_date, "$lt": end_date}
-#     }
+    search_filter = {
+        "user_id": hashed_user_id,
+        "timestamp": {"$gte": start_date, "$lt": end_date}
+    }
 
-#     results = list(db.entries.find(search_filter, {"_id": 0}))
+    results = list(db.entries.find(search_filter, {"_id": 0}))
 
-#     if not results:
-#         return jsonify({"message": "No matching entries found."})
+    if not results:
+        return jsonify({"message": "No matching entries found."})
 
-#     return jsonify({"results": results})
+    return jsonify({"results": results})
 
 @main.route("/chat",methods=['GET'])
 def chat_page():
     return render_template("chat.html")  # Renders the chat page
 
 @main.route("/chat_api", methods=["POST"])
-def chat_api():
-    data = request.get_json()
-    user_message = data.get("message", "")
+def chat():
+    data = request.json
+    user_id = data.get("user_id")
+    user_input = data.get("message").strip().lower()
 
-    if not user_message:
-        return jsonify({"error": "No message provided"}), 400
+    if not user_id or not user_input:
+        return jsonify({"error": "Missing user_id or message"}), 400
 
-    rasa_url = "http://localhost:5005/webhooks/rest/webhook"
-    payload = {"sender": "user", "message": user_message}
-    response = requests.post(rasa_url, json=payload)
+    # Step 1: Check if the user is greeting
+    greetings = ["hi", "hello", "hey"]
+    if user_input in greetings:
+        return jsonify({"response": "How are you feeling today?"})
 
-    try:
-        bot_response = response.json()
-        if bot_response:
-            reply = bot_response[0].get("text", "Sorry, I didn't understand that.")
-        else:
-            reply = "Sorry, no response from the bot."
-    except Exception as e:
-        reply = f"Error: {str(e)}"
+    # Step 2: Detect emotion from user input
+    detected_emotion = classify_text(user_input)
 
-    return jsonify({"response": reply})  # Returning JSON response
+    # Step 3: Prevent looping "How are you feeling today?"
+    if detected_emotion is None:
+        return jsonify({"response": "Could you tell me more about how you're feeling?"})
 
-# 😊 3. Retrieve Memories by Emotion & RASA response
+    # Step 4: Respond based on detected emotion
+    happy_memory_requested = session.get('happy_memory_requested', False) #get the value, and default to false if not set.
+    response, new_happy_memory_requested = chat_with_user(user_id, user_input, happy_memory_requested)
+
+    session['happy_memory_requested'] = new_happy_memory_requested #set the new value in the session.
+
+    return jsonify({"response": response})
+
+
+"""# 😊 3. Retrieve Memories by Emotion & RASA response
 @main.route("/emotion_based", methods=["GET"])
 def get_emotion_memories():
     if not session.get("logged_in"):
@@ -247,4 +302,4 @@ def get_emotion_memories():
     if not filtered_entries:
         return jsonify({"message": f"No memories found for the emotion: {emotion}."})
 
-    return jsonify({"memories": filtered_entries})
+    return jsonify({"memories": filtered_entries})"""
