@@ -337,7 +337,7 @@ def chat():
     return jsonify({"response": response})
 
 
-"""# 😊 3. Retrieve Memories by Emotion & RASA response
+"""# 3. Retrieve Memories by Emotion & RASA response
 @main.route("/emotion_based", methods=["GET"])
 def get_emotion_memories():
     if not session.get("logged_in"):
