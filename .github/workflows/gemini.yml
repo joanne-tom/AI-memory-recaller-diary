@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GEMINI_API_KEY: ${{ secrets.My_API_KEY }}
 
     steps:
       - name: Checkout repository
@@ -27,4 +27,4 @@ jobs:
 
       - name: Run Gemini script
         run: |
-          python .py
+          routes.py
