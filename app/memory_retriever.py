@@ -5,8 +5,9 @@ from pymongo import MongoClient
 import hashlib
 from datetime import datetime
 from app.bert_emotions_classifier import classify_text
+import os
 
-GEMINI_API_KEY = 'My_API_Key'
+api_key = os.getenv("My_API_KEY")
 
 # Setup MongoDB
 mongo_client = MongoClient("mongodb://localhost:27017/")
@@ -39,7 +40,7 @@ embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
 print("Model loaded successfully!")
 
 # Google Gemini API (Use environment variable for security)
-genai.configure(api_key=GEMINI_API_KEY)
+genai.configure(api_key=api_key)
 
 # Function to store memories in ChromaDB
 def generate_memory_id(text):
