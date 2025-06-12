@@ -1,0 +1,30 @@
+name: Gemini API Script Runner
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  run-gemini:
+    runs-on: ubuntu-latest
+
+    env:
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run Gemini script
+        run: |
+          python .py
