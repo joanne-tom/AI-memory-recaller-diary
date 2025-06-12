@@ -7,7 +7,7 @@ from datetime import datetime
 from app.bert_emotions_classifier import classify_text
 import os
 
-api_key = os.getenv("My_API_KEY")
+api_key = os.getenv("MY_API_KEY")
 
 # Setup MongoDB
 mongo_client = MongoClient("mongodb://localhost:27017/")
