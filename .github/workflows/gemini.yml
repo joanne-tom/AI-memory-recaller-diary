@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -r requirements.txt
+          #Added in the files
 
       - name: Run Gemini script
         run: |
