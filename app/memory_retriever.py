@@ -6,7 +6,7 @@ import hashlib
 from datetime import datetime
 from app.bert_emotions_classifier import classify_text
 
-GEMINI_API_KEY = 'Your_API_Key'
+GEMINI_API_KEY = 'My_API_Key'
 
 # Setup MongoDB
 mongo_client = MongoClient("mongodb://localhost:27017/")
