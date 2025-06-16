@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flask pymongo
+          pip install flask flask_pymongo
 
       - name: Set PYTHONPATH
         run: |
