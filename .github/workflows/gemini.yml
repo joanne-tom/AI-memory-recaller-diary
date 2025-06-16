@@ -23,7 +23,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          #Added in the files
+          pip install flask
 
       - name: Run Gemini script
         run: |
