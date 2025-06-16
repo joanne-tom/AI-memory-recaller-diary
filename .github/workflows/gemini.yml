@@ -27,4 +27,4 @@ jobs:
 
       - name: Run Gemini script
         run: |
-          routes.py
+          python app/routes.py
