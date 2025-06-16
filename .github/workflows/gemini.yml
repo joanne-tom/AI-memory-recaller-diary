@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flask flask_pymongo transformers
+          pip install flask flask_pymongo transformers torch
 
       - name: Set PYTHONPATH
         run: |
