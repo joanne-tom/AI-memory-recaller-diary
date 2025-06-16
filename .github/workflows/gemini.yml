@@ -34,7 +34,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install flask flask_pymongo transformers torch chromadb
+          pip install flask flask_pymongo transformers torch chromadb google-generativeai
 
       - name: Set PYTHONPATH
         run: |
