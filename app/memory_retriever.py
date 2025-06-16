@@ -60,7 +60,6 @@ def detect_emotion(user_input):
         """
 
 # Function to migrate memories from MongoDB to ChromaDB
-# Function to migrate memories from MongoDB to ChromaDB with email in metadata
 def migrate_memories(user_id):
     print("Migrate memories called")
 
